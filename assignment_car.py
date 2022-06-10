@@ -94,9 +94,9 @@ def calc_target_index(state, cx, cy):
 
 
 def main():
-    # target course
+    # chirp course
     # cx = np.arange(0, 50, 0.1)
-    # cy = [np.sin(ix / 5.0) * ix / 2.0 for ix in cx]
+    # cy = [np.sin(ix / 2) * ix / 2 for ix in cx]
 
     # circle
     cx = 10*np.sin(np.arange(0, 2*np.pi, 0.01))
@@ -112,6 +112,7 @@ def main():
     state = VehicleState(x=float(x0), y=float(y0), yaw=float(yaw0), v=float(v0))
 
     lastIndex = len(cx) - 1
+
     time = 0
     x = [state.x] # x position
     y = [state.y] # y position
@@ -126,7 +127,7 @@ def main():
         di, target_ind = pure_pursuit_control(state, cx, cy, di, target_ind) # angular velocity change
         state = update(state, di)
 
-        time = time + dt # update time
+        time = time + dt  # update time
 
         x.append(state.x)
         y.append(state.y)
