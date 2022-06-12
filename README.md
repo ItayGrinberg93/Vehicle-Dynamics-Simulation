@@ -12,7 +12,17 @@ The logical way the main works is as follows: receiving input, indexing for the 
 
 At first we get as a input from the user a initial point to start. The main plan the route (line, circle etc.) simulation max time and the veicleState class. 
 
+### VehicleState
+VehicleState is a class that difine the vehicle state information
 
+### update
+the function update is the update that occurs every time step. Int is the Forward Euler method.
+
+### pure_pursuit_control
+the function execute the traking algoritem.
+
+### calc_target_index
+Find the nearest point on the desired path and output the position of the nearest point
 
 
 
