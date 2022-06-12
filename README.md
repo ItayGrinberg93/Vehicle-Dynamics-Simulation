@@ -1,4 +1,4 @@
-# assignment_for_mobileye
+# Vehicle Dynamics Simulation
 ## intro
 In this file you have a code which move a vehicle by use the Pure pursuit tracking.
 The input is the initial position and the output is a figure of the desired and the real paths of the vehicle and the reference point of each epoch.
