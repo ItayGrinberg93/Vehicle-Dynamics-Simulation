@@ -9,14 +9,14 @@ import sys
 # Define constant
 k = 0.1  # look forward gain
 lad = 1  # look - ahead distance
-Kp = 1  # speed propotional gain
-dt = 0.1 # [ s ]
-L = 2.85 # [ m ] wheel base of vehicle
+dt = 0.5 # [ s ] time step size
+L = 2.85 # [ m ] wheelbase of vehicle
+
 
 show_animation = True
 
 
-class VehicleState:  # Define a class to call vehicle state information
+class VehicleState: # Define a class to call vehicle state information
 
     def __init__(self, x=0.0, y=0.0, yaw=0.0, v=0.0):
         self.x = x
@@ -27,7 +27,20 @@ class VehicleState:  # Define a class to call vehicle state information
 
 # step
 def update(state, delta):  # Update vehicle status information
+    """
+           2D Kinematic Bicycle Model
+           At initialisation
+           :param L:                   (float) vehicle's wheelbase [m]
+           :param dt:                  (float) discrete time period [s]
 
+           At every time step
+           :param x:                   (float) vehicle's x-coordinate [m]
+           :param y:                   (float) vehicle's y-coordinate [m]
+           :param yaw:                 (float) vehicle's heading [rad]
+           :param v:                   (float) vehicle's velocity in the x-axis [m/s]
+           :param delta:               (float) vehicle's steering angle [rad]
+           :param angular_velocity     (flaat) V*tan(delta) / L [rad/sec]
+           """
     noise = np.random.normal(0, .05, 3) # white noise
     # position integration
     state.x = state.x + state.v * np.cos(state.yaw) * dt + noise[0]
@@ -35,8 +48,8 @@ def update(state, delta):  # Update vehicle status information
     state.yaw = state.yaw + state.v / L * np.tan(delta) * dt + noise[2]
     return state
 
-
-def pure_pursuit_control(state, cx, cy, delta_previous, pind):  # Pure tracking controller , Sets the  angular change
+# Pure tracking controller , Sets the  angular change
+def pure_pursuit_control(state, cx, cy, delta_previous, pind):
 
     ind = calc_target_index(state, cx, cy)  # Find the function of the nearest point and output the position of the nearest point
 
@@ -53,23 +66,24 @@ def pure_pursuit_control(state, cx, cy, delta_previous, pind):  # Pure tracking 
 
     alpha = np.arctan2(ty - state.y, tx - state.x) - state.yaw
 
-    if state.v < 0:  # back
+    if state.v < 0:  # reverse
         alpha = np.pi - alpha
 
     lf = k * state.v + lad
+    delta = np.arctan2(L * np.sin(alpha), lf)
 
-    delta = np.arctan2(L * np.sin(alpha) / lf, 1)
-
+    # limits on delta rate
     if abs(delta - delta_previous) > 20 * np.pi / 180:
         if delta > delta_previous:
             delta = delta_previous + 20 * np.pi / 180
         else:
-            delta=delta_previous-20 * np.pi / 180
+            delta = delta_previous-20 * np.pi / 180
     # limits on delta
     if delta > 45 * np.pi / 180:
         delta = 45 * np.pi / 180
+    if delta < -45 * np.pi / 180:
+        delta = -45 * np.pi / 180
     return delta, ind
-
 
 
 def calc_target_index(state, cx, cy):
@@ -94,17 +108,15 @@ def calc_target_index(state, cx, cy):
 
 
 def main():
-    # chirp course
-    # cx = np.arange(0, 50, 0.1)
-    # cy = [np.sin(ix / 2) * ix / 2 for ix in cx]
+    # options to Routes
+    # line
+    cx = np.arange(0, 50, 0.1)
+    cy = [ ix*0.3+7 for ix in cx]
 
     # circle
-    cx = 10*np.sin(np.arange(0, 2*np.pi, 0.01))
-    cy = 10*np.cos(np.arange(0, 2*np.pi, 0.01))
+    # cx = 10*np.sin(np.arange(0, 2*np.pi, 0.01))
+    # cy = 10*np.cos(np.arange(0, 2*np.pi, 0.01))
 
-    # line
-    # cx = np.arange(0, 50, 0.1)
-    # cy = [ ix*0.3+7 for ix in cx]
 
     T = 300  # max simulation time [sec]
 
@@ -126,7 +138,6 @@ def main():
     while T >= time and lastIndex > target_ind:
         di, target_ind = pure_pursuit_control(state, cx, cy, di, target_ind) # angular velocity change
         state = update(state, di)
-
         time = time + dt  # update time
 
         x.append(state.x)
