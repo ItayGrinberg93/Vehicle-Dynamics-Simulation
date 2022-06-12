@@ -109,14 +109,19 @@ def calc_target_index(state, cx, cy):
 
 def main():
     # options to Routes
+
     # line
     cx = np.arange(0, 50, 0.1)
-    cy = [ ix*0.3+7 for ix in cx]
+    cy = [ ix*1+0.5 for ix in cx]
 
-    # circle
+    # circle Routes
     # cx = 10*np.sin(np.arange(0, 2*np.pi, 0.01))
     # cy = 10*np.cos(np.arange(0, 2*np.pi, 0.01))
 
+    # Custom Routes
+    # df = pd.read_csv(r'Path where the CSV file is stored\File + name.csv') #read the csv file
+    # cx = df["cx"]
+    # cy = df["cy"]
 
     T = 300  # max simulation time [sec]
 
