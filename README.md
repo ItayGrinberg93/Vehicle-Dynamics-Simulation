@@ -28,8 +28,13 @@ VehicleState is a class that defines the vehicle state information (x,y position
 ### update method
 Updates the vehicle state information in each time step. 
 
-### pure_pursuit_control method
-Execute the tracking algorithm.
+### pure_pursuit_control method 
+
+The tracking algorithm finds the point on the path the vehicle needs to move to and sends a reference signal to the controller regarding how much steer change needs. The controller tries to move the vehicle in the right direction according to the some limitations as rate change and max value of the steer angle.
+
+### second_order_Control method
+
+This method is the controller. I decided on the bandwidth and the damping coefficient from the internet. 
 
 ### calc_target_index method
 Return the position of the nearest point found along the desired path.
