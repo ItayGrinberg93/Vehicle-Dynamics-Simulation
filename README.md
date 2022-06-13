@@ -30,11 +30,11 @@ Updates the vehicle state information in each time step.
 
 ### pure_pursuit_control method 
 
-The tracking algorithm finds the point on the path the vehicle needs to move to and sends a reference signal to the controller regarding how much steer change needs. The controller tries to move the vehicle in the right direction according to the some limitations as rate change and max value of the steer angle.
+The tracking algorithm determines where the vehicle needs to move and sends a reference signal to the controller that indicates how much steering change is required. The controller attempts to move the vehicle according to some limitations such as rate change and maximum steer angle.
 
 ### second_order_Control method
 
-This method is the controller. I decided on the bandwidth and the damping coefficient from the internet. 
+This method is the controller. The first value of the bandwidth and damping coefficient were chosen based on literature and some itrations.  
 
 ### calc_target_index method
 Return the position of the nearest point found along the desired path.
