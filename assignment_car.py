@@ -159,7 +159,6 @@ def main():
         v.append(state.v)
         t.append(time)
 
-
         plt.cla()
         plt.plot(cx, cy, ".r", label="desired path")  # desired path
         plt.plot(x, y, "-b", label="real path") # route
