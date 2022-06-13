@@ -11,9 +11,12 @@ k = 0.1  # look forward gain
 lad = 1  # look - ahead distance
 dt = 0.5 # [ s ] time step size
 L = 2.85 # [ m ] wheelbase of vehicle
+Kp=1 # propotional gain
+w=20 # bandwidth
+zeta=0.7 # damping
+delay = 0.2 # [sec]
 
 
-show_animation = True
 
 
 class VehicleState: # Define a class to call vehicle state information
@@ -48,6 +51,11 @@ def update(state, delta):  # Update vehicle status information
     state.yaw = state.yaw + state.v / L * np.tan(delta) * dt + noise[2]
     return state
 
+
+def second_order_Control(u, u_p):
+    a = Kp*w**2 * (u-u_p) * (dt+delay)**2 +2 * zeta * w * u_p * (dt+delay) + u_p
+    return a
+
 # Pure tracking controller , Sets the  angular change
 def pure_pursuit_control(state, cx, cy, delta_previous, pind):
 
@@ -71,7 +79,7 @@ def pure_pursuit_control(state, cx, cy, delta_previous, pind):
 
     lf = k * state.v + lad
     delta = np.arctan2(L * np.sin(alpha), lf)
-
+    delta = second_order_Control(delta, delta_previous)
     # limits on delta rate
     if abs(delta - delta_previous) > 20 * np.pi / 180:
         if delta > delta_previous:
@@ -151,19 +159,19 @@ def main():
         v.append(state.v)
         t.append(time)
 
-        if show_animation:
-            plt.cla()
-            plt.plot(cx, cy, ".r", label="desired path")  # desired path
-            plt.plot(x, y, "-b", label="real path") # route
-            plt.plot(cx[target_ind], cy[target_ind], "xg", label="reference point") # reference point
-            plt.axis("equal")
-            plt.grid(True)
-            plt.title("Speed[km/h]:" + str(state.v * 3.6)[: 4])
-            plt.xlabel("x location")
-            plt.ylabel("y location")
-            plt.legend(loc='upper right')
-            plt.pause(0.001)
-            # plt.show()
+
+        plt.cla()
+        plt.plot(cx, cy, ".r", label="desired path")  # desired path
+        plt.plot(x, y, "-b", label="real path") # route
+        plt.plot(cx[target_ind], cy[target_ind], "xg", label="reference point") # reference point
+        plt.axis("equal")
+        plt.grid(True)
+        plt.title("Speed[km/h]:" + str(state.v * 3.6)[: 4])
+        plt.xlabel("x location")
+        plt.ylabel("y location")
+        plt.legend(loc='upper right')
+        plt.pause(0.001)
+        # plt.show()
 
 
 if __name__ == '__main__':
