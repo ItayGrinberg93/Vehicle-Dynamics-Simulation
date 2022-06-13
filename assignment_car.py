@@ -43,7 +43,7 @@ def update(state, delta):  # Update vehicle status information
            :param v:                   (float) vehicle's velocity in the x-axis [m/s]
            :param delta:               (float) vehicle's steering angle [rad]
            :param angular_velocity     (flaat) V*tan(delta) / L [rad/sec]
-           """
+    """
     noise = np.random.normal(0, .05, 3) # white noise
     # position integration
     state.x = state.x + state.v * np.cos(state.yaw) * dt + noise[0]
@@ -51,8 +51,9 @@ def update(state, delta):  # Update vehicle status information
     state.yaw = state.yaw + state.v / L * np.tan(delta) * dt + noise[2]
     return state
 
+
 # Second order
-def second_order_Control(u, u_p):
+def second_order_control(u, u_p):
     a = Kp*w**2 * (u-u_p) * (dt+delay)**2 + 2 * zeta * w * u_p * (dt+delay)
     return a
 
@@ -80,7 +81,7 @@ def pure_pursuit_control(state, cx, cy, delta_previous, pind):
 
     lf = k * state.v + lad
     delta = np.arctan2(L * np.sin(alpha), lf)
-    delta = second_order_Control(delta, delta_previous)
+    delta = second_order_control(delta, delta_previous)
     # limits on delta rate
     if abs(delta - delta_previous) > 20 * np.pi / 180:
         if delta > delta_previous:
