@@ -11,9 +11,9 @@ k = 0.1  # look forward gain
 lad = 1  # look - ahead distance
 dt = 0.5 # [ s ] time step size
 L = 2.85 # [ m ] wheelbase of vehicle
-Kp=1 # propotional gain
-w=20 # bandwidth
-zeta=0.7 # damping
+Kp=12# propotional gain
+w=80 # bandwidth
+zeta=0.5 # damping
 delay = 0.2 # [sec]
 
 
@@ -51,10 +51,11 @@ def update(state, delta):  # Update vehicle status information
     state.yaw = state.yaw + state.v / L * np.tan(delta) * dt + noise[2]
     return state
 
-
+# Second order
 def second_order_Control(u, u_p):
-    a = Kp*w**2 * (u-u_p) * (dt+delay)**2 +2 * zeta * w * u_p * (dt+delay) + u_p
+    a = Kp*w**2 * (u-u_p) * (dt+delay)**2 + 2 * zeta * w * u_p * (dt+delay)
     return a
+
 
 # Pure tracking controller , Sets the  angular change
 def pure_pursuit_control(state, cx, cy, delta_previous, pind):
@@ -119,12 +120,12 @@ def main():
     # options to Routes
 
     # line
-    cx = np.arange(0, 50, 0.1)
-    cy = [ ix*1+0.5 for ix in cx]
+    # cx = np.arange(0, 50, 0.1)
+    # cy = [ ix*1+0.5 for ix in cx]
 
     # circle Routes
-    # cx = 10*np.sin(np.arange(0, 2*np.pi, 0.01))
-    # cy = 10*np.cos(np.arange(0, 2*np.pi, 0.01))
+    cx = 10*np.sin(np.arange(0, 2*np.pi, 0.01))
+    cy = 10*np.cos(np.arange(0, 2*np.pi, 0.01))
 
     # Custom Routes
     # df = pd.read_csv(r'Path where the CSV file is stored\File + name.csv') #read the csv file
